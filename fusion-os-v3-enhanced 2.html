@@ -1,0 +1,1364 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fusion OS v3.0 - LivroVivo Edition</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+    <style>
+        /* ============================================================================
+           FUSION OS v3.0 - ENHANCED STYLESHEET
+           Architecture: Glassmorphism + LivroVivo Design System
+           Features: Permissões, Fusões Inteligentes, UI/UX Refinada
+           ============================================================================ */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────
+           ROOT & THEME VARIABLES
+           ───────────────────────────────────────────────────────────────────────── */
+        :root {
+            --bg-primary: rgb(7, 11, 20);
+            --bg-secondary: rgba(15, 23, 42, 0.8);
+            --bg-tertiary: rgba(30, 41, 59, 0.6);
+            --text-primary: rgb(234, 246, 255);
+            --text-secondary: rgba(234, 246, 255, 0.7);
+            --text-muted: rgba(234, 246, 255, 0.4);
+            --border-light: rgba(255, 255, 255, 0.08);
+            --border-medium: rgba(255, 255, 255, 0.15);
+            --accent-cyan: #00f2ff;
+            --accent-purple: #bd00ff;
+            --accent-red: #ef4444;
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.5);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --transition-fast: 0.16s ease;
+            --transition-smooth: 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+            --transition-elastic: 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────
+           BODY & GLOBAL STYLES
+           ───────────────────────────────────────────────────────────────────────── */
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 14px;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────
+           SCROLLBAR CUSTOMIZATION
+           ───────────────────────────────────────────────────────────────────────── */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 242, 255, 0.16);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 242, 255, 0.24);
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────
+           ANIMATIONS & KEYFRAMES
+           ───────────────────────────────────────────────────────────────────────── */
+        @keyframes orb-spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes orb-pulse {
+            0%, 100% { box-shadow: 0 0 30px rgba(0, 242, 255, 0.6); }
+            50% { box-shadow: 0 0 50px rgba(0, 242, 255, 0.8); }
+        }
+
+        @keyframes slide-up {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @keyframes fade-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes scale-in {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translate(0); }
+            10% { transform: translate(-2px, -2px); }
+            20% { transform: translate(2px, 2px); }
+            30% { transform: translate(-2px, 2px); }
+            40% { transform: translate(2px, -2px); }
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────
+           ORB TRIGGER BUTTON
+           ───────────────────────────────────────────────────────────────────────── */
+        .orb-trigger {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 72px;
+            height: 72px;
+            cursor: pointer;
+            z-index: 10010;
+            display: grid;
+            place-items: center;
+            background: transparent;
+            border: none;
+            outline: none;
+            pointer-events: auto;
+            transition: transform var(--transition-elastic);
+        }
+
+        .orb-trigger:hover {
+            transform: translateX(-50%) scale(1.08);
+        }
+
+        .orb-trigger:active {
+            transform: translateX(-50%) scale(0.96);
+        }
+
+        /* Núcleo do Orb */
+        .orb-core {
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 18px rgba(255, 255, 255, 0.95);
+            transition: all var(--transition-smooth);
+        }
+
+        /* Anel do Orb */
+        .orb-ring {
+            position: absolute;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-top-color: var(--accent-cyan);
+            border-bottom-color: var(--accent-purple);
+            animation: orb-spin 4s linear infinite;
+            opacity: 0.75;
+            transition: all var(--transition-smooth);
+        }
+
+        /* Estado ativo do Orb */
+        .os-active .orb-core {
+            background: var(--accent-cyan);
+            box-shadow: 0 0 30px var(--accent-cyan);
+            transform: scale(1.18);
+            animation: orb-pulse 2s ease-in-out infinite;
+        }
+
+        .os-active .orb-ring {
+            animation-duration: 1.25s;
+            opacity: 1;
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.18);
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────
+           MONOLITH CONTAINER (PAINEL PRINCIPAL)
+           ───────────────────────────────────────────────────────────────────────── */
+        .monolith-wrapper {
+            perspective: 2000px;
+            z-index: 9998;
+            pointer-events: none;
+            position: fixed;
+            inset: 0;
+        }
+
+        .monolith {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%) translateY(60px) scale(0.9);
+            width: 90%;
+            max-width: 500px;
+            height: 70vh;
+            max-height: 600px;
+            background: rgba(10, 10, 14, 0.95);
+            backdrop-filter: blur(60px);
+            border: 1px solid var(--border-medium);
+            border-radius: var(--radius-xl);
+            clip-path: circle(0% at 50% 100%);
+            opacity: 0;
+            transition: all var(--transition-smooth);
+            pointer-events: none;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Estado ativo do Monolith */
+        .os-active .monolith {
+            transform: translateX(-50%) translateY(0) scale(1);
+            opacity: 1;
+            clip-path: circle(150% at 50% 100%);
+            pointer-events: auto;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────
+           HEADER DO MONOLITH
+           ───────────────────────────────────────────────────────────────────────── */
+        .monolith-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .monolith-title {
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            color: var(--text-primary);
+        }
+
+        .monolith-title-accent {
+            color: var(--accent-cyan);
+            margin-left: 4px;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────
+           TAB NAVIGATION
+           ───────────────────────────────────────────────────────────────────────── */
+        .tab-nav {
+            display: flex;
+            gap: 8px;
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+
+        .tab-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius-md);
+            transition: all var(--transition-smooth);
+            color: rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: 1px solid transparent;
+            cursor: pointer;
+            outline: none;
+            position: relative;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .tab-btn.active {
+            color: var(--accent-cyan);
+            background: rgba(0, 242, 255, 0.08);
+            border-color: rgba(0, 242, 255, 0.12);
+            box-shadow: 0 0 12px rgba(0, 242, 255, 0.06);
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────
+           CONTENT AREA
+           ───────────────────────────────────────────────────────────────────────── */
+        .monolith-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────
+           GLASS PANELS & CARDS
+           ───────────────────────────────────────────────────────────────────────── */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-medium);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            transition: all var(--transition-smooth);
+        }
+
+        .glass-panel:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(0, 242, 255, 0.12);
+        }
+
+        .app-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            transition: all var(--transition-smooth);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(0, 242, 255, 0.1) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity var(--transition-smooth);
+        }
+
+        .app-card:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: var(--border-medium);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .app-card:hover::before {
+            opacity: 1;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────
+           BUTTONS
+           ───────────────────────────────────────────────────────────────────────── */
+        .btn {
+            padding: 10px 16px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-medium);
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            outline: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--border-medium);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Variante Primária */
+        .btn-primary {
+            background: rgba(0, 242, 255, 0.15);
+            color: var(--accent-cyan);
+            border-color: rgba(0, 242, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: rgba(0, 242, 255, 0.25);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 12px rgba(0, 242, 255, 0.2);
+        }
+
+        /* Variante Secundária */
+        .btn-secondary {
+            background: rgba(189, 0, 255, 0.1);
+            color: var(--accent-purple);
+            border-color: rgba(189, 0, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(189, 0, 255, 0.2);
+            border-color: var(--accent-purple);
+        }
+
+        /* Variante Destruidora */
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--accent-red);
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: var(--accent-red);
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────
+           RUNTIME LAYER (SANDBOX)
+           ───────────────────────────────────────────────────────────────────────── */
+        .runtime-layer {
+            position: fixed;
+            inset: 0;
+            background: var(--bg-primary);
+            transform: translateY(100%);
+            transition: transform var(--transition-smooth);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .runtime-layer.visible {
+            transform: translateY(0);
+        }
+
+        .runtime-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .runtime-frame {
+            flex: 1;
+            border: none;
+            background: transparent;
+            width: 100%;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────
+           FUSION EXIT BUTTON
+           ───────────────────────────────────────────────────────────────────────── */
+        .fusion-exit-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--accent-cyan);
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(239, 68, 68, 0.22);
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.08);
+            transition: all var(--transition-fast);
+            cursor: pointer;
+            outline: none;
+            z-index: 10020;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .fusion-exit-btn.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .fusion-exit-btn:hover {
+            transform: scale(1.06);
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--text-primary);
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────
+           PERMISSION BADGE
+           ───────────────────────────────────────────────────────────────────────── */
+        .permission-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: var(--radius-sm);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            background: rgba(0, 242, 255, 0.1);
+            color: var(--accent-cyan);
+            border: 1px solid rgba(0, 242, 255, 0.2);
+        }
+
+        .permission-badge.restricted {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--accent-red);
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────
+           ACCORDION
+           ───────────────────────────────────────────────────────────────────────── */
+        .accordion-item {
+            transition: all var(--transition-smooth);
+            overflow: hidden;
+            border: 1px solid var(--border-light);
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.02) 0%, rgba(0, 0, 0, 0.3) 100%);
+            border-radius: var(--radius-lg);
+        }
+
+        .accordion-item.expanded {
+            background: linear-gradient(145deg, rgba(0, 242, 255, 0.04) 0%, rgba(0, 0, 0, 0.45) 100%);
+            border-color: rgba(0, 242, 255, 0.18);
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.6);
+            transform: scale(1.01);
+            margin: 10px 0;
+        }
+
+        .accordion-trigger {
+            width: 100%;
+            padding: 12px 16px;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 13px;
+            font-weight: 600;
+            text-align: left;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all var(--transition-fast);
+        }
+
+        .accordion-trigger:hover {
+            color: var(--accent-cyan);
+        }
+
+        .accordion-content {
+            padding: 0 16px 16px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────
+           FORM ELEMENTS
+           ───────────────────────────────────────────────────────────────────────── */
+        input[type="text"],
+        input[type="email"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-medium);
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-primary);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            transition: all var(--transition-fast);
+            outline: none;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        textarea:focus,
+        select:focus {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 12px rgba(0, 242, 255, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            font-family: 'JetBrains Mono', monospace;
+            min-height: 100px;
+        }
+
+        /* ─────────────────────────────────────────────────────────────────────────
+           UTILITY CLASSES
+           ───────────────────────────────────────────────────────────────────────── */
+        .hidden {
+            display: none !important;
+        }
+
+        .flex-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .flex-col {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-muted {
+            color: var(--text-muted);
+        }
+
+        .text-accent {
+            color: var(--accent-cyan);
+        }
+
+        .mt-4 { margin-top: 16px; }
+        .mb-4 { margin-bottom: 16px; }
+        .gap-4 { gap: 16px; }
+
+        /* ─────────────────────────────────────────────────────────────────────────
+           RESPONSIVE DESIGN
+           ───────────────────────────────────────────────────────────────────────── */
+        @media (max-width: 768px) {
+            .monolith {
+                width: 95%;
+                max-height: 80vh;
+            }
+
+            .monolith-content {
+                padding: 16px;
+            }
+
+            .tab-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 12px;
+            }
+
+            .btn {
+                font-size: 11px;
+                padding: 8px 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .monolith {
+                width: 98%;
+                height: 85vh;
+                border-radius: var(--radius-lg);
+            }
+
+            .monolith-header {
+                padding: 16px;
+            }
+
+            .monolith-content {
+                padding: 12px;
+                gap: 12px;
+            }
+
+            .tab-nav {
+                gap: 4px;
+            }
+
+            .tab-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ═══════════════════════════════════════════════════════════════════════════
+         ORB TRIGGER BUTTON (Botão de ativação flutuante)
+         ═══════════════════════════════════════════════════════════════════════════ -->
+    <button class="orb-trigger" id="orbTrigger" title="Abrir Fusion OS">
+        <div class="orb-ring"></div>
+        <div class="orb-core"></div>
+    </button>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════
+         MONOLITH CONTAINER (Painel principal do Fusion OS)
+         ═══════════════════════════════════════════════════════════════════════════ -->
+    <div class="monolith-wrapper">
+        <div class="monolith" id="monolith">
+            <!-- Header com título e navegação -->
+            <div class="monolith-header">
+                <div>
+                    <h1 class="monolith-title">
+                        Fusion<span class="monolith-title-accent">OS</span>
+                    </h1>
+                </div>
+                <ul class="tab-nav" id="tabNav">
+                    <li>
+                        <button class="tab-btn active" data-tab="dashboard" title="Dashboard">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="14" width="7" height="7"></rect>
+                                <rect x="3" y="14" width="7" height="7"></rect>
+                            </svg>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="tab-btn" data-tab="apps" title="Aplicativos">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.35-4.35"></path>
+                            </svg>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="tab-btn" data-tab="lab" title="Laboratório">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M9 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2h-2"></path>
+                                <path d="M9 9h6"></path>
+                                <path d="M9 13h6"></path>
+                                <path d="M9 17h6"></path>
+                            </svg>
+                        </button>
+                    </li>
+                    <li>
+                        <button class="tab-btn" data-tab="settings" title="Configurações">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="3"></circle>
+                                <path d="M12 1v6m0 6v6"></path>
+                                <path d="M4.22 4.22l4.24 4.24m4.24 4.24l4.24 4.24"></path>
+                                <path d="M1 12h6m6 0h6"></path>
+                                <path d="M4.22 19.78l4.24-4.24m4.24-4.24l4.24-4.24"></path>
+                            </svg>
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Área de conteúdo -->
+            <div class="monolith-content" id="monolithContent">
+                <!-- Dashboard Tab -->
+                <div id="dashboard-tab" class="tab-content">
+                    <div class="glass-panel">
+                        <h2 style="font-size: 14px; font-weight: 700; margin-bottom: 12px; color: var(--accent-cyan);">
+                            👋 Bem-vindo ao Fusion OS v3.0
+                        </h2>
+                        <p style="color: var(--text-secondary); font-size: 12px; line-height: 1.6;">
+                            Sistema modular de integração com permissões avançadas, fusões inteligentes e interface refinada baseada no design do LivroVivo.
+                        </p>
+                    </div>
+
+                    <div class="glass-panel">
+                        <h3 style="font-size: 12px; font-weight: 700; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">
+                            📊 Status do Sistema
+                        </h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 11px;">
+                            <div style="padding: 12px; background: rgba(0, 242, 255, 0.05); border: 1px solid rgba(0, 242, 255, 0.1); border-radius: var(--radius-md);">
+                                <div style="color: var(--text-muted); margin-bottom: 4px;">Apps Instalados</div>
+                                <div style="font-size: 18px; font-weight: 700; color: var(--accent-cyan);" id="appCount">1</div>
+                            </div>
+                            <div style="padding: 12px; background: rgba(189, 0, 255, 0.05); border: 1px solid rgba(189, 0, 255, 0.1); border-radius: var(--radius-md);">
+                                <div style="color: var(--text-muted); margin-bottom: 4px;">Permissões Ativas</div>
+                                <div style="font-size: 18px; font-weight: 700; color: var(--accent-purple);" id="permCount">3</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel">
+                        <h3 style="font-size: 12px; font-weight: 700; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">
+                            🔐 Permissões Ativas
+                        </h3>
+                        <div style="display: flex; flex-direction: column; gap: 8px;">
+                            <div style="display: flex; align-items: center; gap: 8px; padding: 8px; background: rgba(0, 242, 255, 0.05); border-radius: var(--radius-md);">
+                                <span class="permission-badge">LEITURA</span>
+                                <span style="font-size: 11px; color: var(--text-secondary);">Acesso a dados públicos</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px; padding: 8px; background: rgba(0, 242, 255, 0.05); border-radius: var(--radius-md);">
+                                <span class="permission-badge">FUSÃO</span>
+                                <span style="font-size: 11px; color: var(--text-secondary);">Integração de módulos</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px; padding: 8px; background: rgba(189, 0, 255, 0.05); border-radius: var(--radius-md);">
+                                <span class="permission-badge restricted">ADMIN</span>
+                                <span style="font-size: 11px; color: var(--text-secondary);">Gerenciamento avançado</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Apps Tab -->
+                <div id="apps-tab" class="tab-content" style="display: none;">
+                    <div class="glass-panel">
+                        <h2 style="font-size: 14px; font-weight: 700; margin-bottom: 12px; color: var(--accent-cyan);">
+                            📱 Aplicativos Instalados
+                        </h2>
+                        <p style="color: var(--text-muted); font-size: 11px;">
+                            Gerencie e integre aplicativos com permissões granulares.
+                        </p>
+                    </div>
+
+                    <div id="appsList" style="display: flex; flex-direction: column; gap: 12px;">
+                        <!-- Apps serão inseridos aqui dinamicamente -->
+                    </div>
+                </div>
+
+                <!-- Lab Tab -->
+                <div id="lab-tab" class="tab-content" style="display: none;">
+                    <div class="glass-panel">
+                        <h2 style="font-size: 14px; font-weight: 700; margin-bottom: 12px; color: var(--accent-purple);">
+                            🧪 Laboratório de Fusão
+                        </h2>
+                        <p style="color: var(--text-muted); font-size: 11px; margin-bottom: 16px;">
+                            Teste e customize estilos, injete módulos e converta conteúdo.
+                        </p>
+
+                        <div class="accordion-item">
+                            <button class="accordion-trigger" onclick="toggleAccordion(this)">
+                                <span>Conversor de Monólitos</span>
+                                <span style="font-size: 16px;">▼</span>
+                            </button>
+                            <div class="accordion-content" style="display: none;">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+                                    <textarea id="lab-input" placeholder="Cole HTML aqui..." style="min-height: 120px;"></textarea>
+                                    <textarea id="lab-output" placeholder="Saída processada..." readonly style="min-height: 120px; background: rgba(255, 255, 255, 0.02);"></textarea>
+                                </div>
+                                <div style="display: flex; gap: 8px;">
+                                    <button class="btn btn-primary" onclick="convertHTML()">Converter</button>
+                                    <button class="btn btn-secondary" onclick="injectModule()">Injetar</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item" style="margin-top: 12px;">
+                            <button class="accordion-trigger" onclick="toggleAccordion(this)">
+                                <span>Estilos Globais</span>
+                                <span style="font-size: 16px;">▼</span>
+                            </button>
+                            <div class="accordion-content" style="display: none;">
+                                <textarea id="css-input" placeholder="/* Cole seu CSS personalizado aqui */" style="min-height: 150px; margin-bottom: 12px;"></textarea>
+                                <button class="btn btn-primary" onclick="saveCustomCSS()">Salvar Estilos</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Tab -->
+                <div id="settings-tab" class="tab-content" style="display: none;">
+                    <div class="glass-panel">
+                        <h2 style="font-size: 14px; font-weight: 700; margin-bottom: 12px; color: var(--accent-cyan);">
+                            ⚙️ Configurações
+                        </h2>
+                    </div>
+
+                    <div class="glass-panel">
+                        <h3 style="font-size: 12px; font-weight: 700; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">
+                            Identidade do Usuário
+                        </h3>
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <div>
+                                <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.3px;">
+                                    Nome de Usuário
+                                </label>
+                                <input type="text" id="userName" placeholder="Seu nome" />
+                            </div>
+                            <div>
+                                <label style="display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.3px;">
+                                    Sistema
+                                </label>
+                                <input type="text" id="systemName" placeholder="Nome do sistema" />
+                            </div>
+                            <button class="btn btn-primary" onclick="saveUserSettings()">Salvar Configurações</button>
+                        </div>
+                    </div>
+
+                    <div class="glass-panel">
+                        <h3 style="font-size: 12px; font-weight: 700; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.5px;">
+                            Sobre
+                        </h3>
+                        <div style="font-size: 11px; color: var(--text-secondary); line-height: 1.6;">
+                            <p><strong>Fusion OS v3.0</strong></p>
+                            <p style="margin-top: 8px;">LivroVivo Edition - Sistema modular com permissões avançadas, fusões inteligentes e UI/UX refinada.</p>
+                            <p style="margin-top: 8px; color: var(--text-muted);">© 2026 Fusion Technologies</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════
+         RUNTIME LAYER (Sandbox para aplicações)
+         ═══════════════════════════════════════════════════════════════════════════ -->
+    <div class="runtime-layer" id="runtimeLayer">
+        <div class="runtime-header">
+            <span style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">
+                Sandbox Runtime
+            </span>
+            <button class="btn" onclick="closeRuntime()" style="padding: 6px 12px; font-size: 10px;">
+                Fechar
+            </button>
+        </div>
+        <iframe class="runtime-frame" id="runtimeFrame"></iframe>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════
+         FUSION EXIT BUTTON (Botão para sair do modo fusão)
+         ═══════════════════════════════════════════════════════════════════════════ -->
+    <button class="fusion-exit-btn" id="fusionExitBtn" onclick="exitFusion()" title="Sair do modo fusão">
+        ✕
+    </button>
+
+    <!-- ═══════════════════════════════════════════════════════════════════════════
+         JAVASCRIPT - LÓGICA PRINCIPAL
+         ═══════════════════════════════════════════════════════════════════════════ -->
+    <script>
+        /**
+         * FUSION OS v3.0 - ENHANCED JAVASCRIPT MODULE
+         * Architecture: IIFE com State Management
+         * Features: Permissões, Fusões Inteligentes, Sandbox Runtime
+         */
+
+        const FusionOS = (() => {
+            // ─────────────────────────────────────────────────────────────────────
+            // CONFIGURAÇÃO & ESTADO PRIVADO
+            // ─────────────────────────────────────────────────────────────────────
+            const CONFIG = {
+                storageKey: 'fusion_os_v3_state',
+                orbTriggerId: 'orbTrigger',
+                monolithId: 'monolith',
+                runtimeLayerId: 'runtimeLayer',
+                runtimeFrameId: 'runtimeFrame',
+                fusionExitBtnId: 'fusionExitBtn',
+            };
+
+            const DEFAULT_APPS = [
+                {
+                    id: 'DELTA',
+                    name: 'Delta Hub',
+                    desc: 'Interface de conexão externa e integração de dados.',
+                    url: 'https://kodux78k.github.io/DualInfodose-VirgemHuB/index.html',
+                    icon: 'globe',
+                    permissions: ['READ', 'FUSION'],
+                    active: true,
+                },
+                {
+                    id: 'LIVROVIVO',
+                    name: 'LivroVivo',
+                    desc: 'Sistema de documentação dinâmica e gerenciamento de conteúdo.',
+                    url: 'https://kodux78k.github.io/Dual-Docs/index.html',
+                    icon: 'book',
+                    permissions: ['READ', 'WRITE'],
+                    active: true,
+                },
+                {
+                    id: 'VIVIVI',
+                    name: 'Vivivi System',
+                    desc: 'Plataforma de identificação e análise de sistemas.',
+                    url: 'https://kodux78k.github.io/oiDual-Vivivi-1/',
+                    icon: 'dna',
+                    permissions: ['READ', 'ADMIN'],
+                    active: false,
+                },
+            ];
+
+            let state = {
+                active: false,
+                apps: [...DEFAULT_APPS],
+                hiddenApps: [],
+                customCSS: '',
+                currentTab: 'dashboard',
+                userData: {
+                    user: 'Visitante',
+                    system: 'SINGULARITY',
+                },
+            };
+
+            // ─────────────────────────────────────────────────────────────────────
+            // UTILITÁRIOS
+            // ─────────────────────────────────────────────────────────────────────
+            const Utils = {
+                save: () => {
+                    localStorage.setItem(CONFIG.storageKey, JSON.stringify({
+                        apps: state.apps,
+                        hiddenApps: state.hiddenApps,
+                        customCSS: state.customCSS,
+                        userData: state.userData,
+                    }));
+                },
+
+                load: () => {
+                    const stored = localStorage.getItem(CONFIG.storageKey);
+                    if (stored) {
+                        try {
+                            const parsed = JSON.parse(stored);
+                            state.apps = parsed.apps || [...DEFAULT_APPS];
+                            state.hiddenApps = parsed.hiddenApps || [];
+                            state.customCSS = parsed.customCSS || '';
+                            state.userData = parsed.userData || state.userData;
+                        } catch (e) {
+                            console.error('Erro ao carregar estado:', e);
+                        }
+                    }
+                },
+
+                speak: (msg) => {
+                    if (!('speechSynthesis' in window)) return;
+                    try {
+                        window.speechSynthesis.cancel();
+                        const utterance = new SpeechSynthesisUtterance(msg);
+                        utterance.lang = 'pt-BR';
+                        utterance.rate = 1.15;
+                        window.speechSynthesis.speak(utterance);
+                    } catch (e) {
+                        console.warn('TTS falhou:', e);
+                    }
+                },
+
+                shake: () => {
+                    document.body.style.animation = 'shake 0.32s ease-in-out';
+                    setTimeout(() => {
+                        document.body.style.animation = '';
+                    }, 320);
+                },
+            };
+
+            // ─────────────────────────────────────────────────────────────────────
+            // GERENCIAMENTO DE PERMISSÕES
+            // ─────────────────────────────────────────────────────────────────────
+            const Permissions = {
+                check: (appId, permission) => {
+                    const app = state.apps.find(a => a.id === appId);
+                    return app && app.permissions && app.permissions.includes(permission);
+                },
+
+                grant: (appId, permission) => {
+                    const app = state.apps.find(a => a.id === appId);
+                    if (app && !app.permissions.includes(permission)) {
+                        app.permissions.push(permission);
+                        Utils.save();
+                    }
+                },
+
+                revoke: (appId, permission) => {
+                    const app = state.apps.find(a => a.id === appId);
+                    if (app) {
+                        app.permissions = app.permissions.filter(p => p !== permission);
+                        Utils.save();
+                    }
+                },
+
+                getAll: (appId) => {
+                    const app = state.apps.find(a => a.id === appId);
+                    return app ? app.permissions : [];
+                },
+            };
+
+            // ─────────────────────────────────────────────────────────────────────
+            // FUSÕES INTELIGENTES
+            // ─────────────────────────────────────────────────────────────────────
+            const SmartFusion = {
+                merge: async (sourceApp, targetApp) => {
+                    // Verifica permissões de fusão
+                    if (!Permissions.check(sourceApp.id, 'FUSION')) {
+                        Utils.speak('Permissão de fusão negada para este aplicativo.');
+                        return false;
+                    }
+
+                    console.log(`Fusionando ${sourceApp.name} com ${targetApp.name}`);
+                    Utils.speak(`Iniciando fusão de ${sourceApp.name}.`);
+                    return true;
+                },
+
+                performFusion: async (app) => {
+                    const navRoot = document.getElementById('navRoot') || document.body;
+
+                    if (state.active) {
+                        toggle();
+                    }
+
+                    document.getElementById(CONFIG.fusionExitBtnId).classList.add('visible');
+
+                    try {
+                        const response = await fetch(app.url);
+                        if (response.ok) {
+                            const html = await response.text();
+                            injectIntoDOM(navRoot, html);
+                        } else {
+                            createIframe(navRoot, app.url);
+                        }
+                    } catch (e) {
+                        console.error('Erro na fusão:', e);
+                        createIframe(navRoot, app.url);
+                    }
+                },
+            };
+
+            // ─────────────────────────────────────────────────────────────────────
+            // FUNÇÕES PÚBLICAS
+            // ─────────────────────────────────────────────────────────────────────
+            const toggle = () => {
+                const monolith = document.getElementById(CONFIG.monolithId);
+                state.active = !state.active;
+
+                if (state.active) {
+                    document.body.classList.add('os-active');
+                    monolith.style.pointerEvents = 'auto';
+                } else {
+                    document.body.classList.remove('os-active');
+                    monolith.style.pointerEvents = 'none';
+                }
+            };
+
+            const launch = (appId, mode) => {
+                const app = state.apps.find(a => a.id === appId);
+                if (!app) {
+                    Utils.speak('Aplicativo não encontrado.');
+                    return;
+                }
+
+                if (mode === 'sandbox') {
+                    const runtimeLayer = document.getElementById(CONFIG.runtimeLayerId);
+                    const runtimeFrame = document.getElementById(CONFIG.runtimeFrameId);
+                    runtimeLayer.classList.add('visible');
+                    runtimeFrame.src = app.url;
+                    Utils.speak(`Abrindo ${app.name} em sandbox.`);
+                } else if (mode === 'fusion') {
+                    SmartFusion.performFusion(app);
+                }
+            };
+
+            const renderApps = () => {
+                const appsList = document.getElementById('appsList');
+                appsList.innerHTML = state.apps
+                    .filter(app => !state.hiddenApps.includes(app.id))
+                    .map(app => `
+                        <div class="app-card">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                                <div style="flex: 1;">
+                                    <h3 style="font-size: 13px; font-weight: 700; margin-bottom: 4px; color: var(--text-primary);">
+                                        ${app.name}
+                                    </h3>
+                                    <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px;">
+                                        ${app.desc}
+                                    </p>
+                                    <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                                        ${(app.permissions || []).map(perm => `
+                                            <span class="permission-badge ${perm === 'ADMIN' ? 'restricted' : ''}">
+                                                ${perm}
+                                            </span>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 8px; margin-top: 12px;">
+                                <button class="btn btn-primary" onclick="FusionOS.launch('${app.id}', 'sandbox')" style="flex: 1;">
+                                    Janela
+                                </button>
+                                <button class="btn btn-secondary" onclick="FusionOS.launch('${app.id}', 'fusion')" style="flex: 1;">
+                                    Fusão
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+            };
+
+            const init = () => {
+                Utils.load();
+                renderApps();
+                setupEventListeners();
+            };
+
+            return {
+                toggle,
+                launch,
+                renderApps,
+                init,
+                Permissions,
+                SmartFusion,
+                Utils,
+            };
+        })();
+
+        // ─────────────────────────────────────────────────────────────────────
+        // EVENT LISTENERS & DOM MANIPULATION
+        // ─────────────────────────────────────────────────────────────────────
+        function setupEventListeners() {
+            // Orb Trigger
+            document.getElementById('orbTrigger').addEventListener('click', () => {
+                FusionOS.toggle();
+            });
+
+            // Tab Navigation
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const tab = e.currentTarget.dataset.tab;
+                    switchTab(tab);
+                });
+            });
+        }
+
+        function switchTab(tabName) {
+            // Esconde todas as abas
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.style.display = 'none';
+            });
+
+            // Remove classe ativa de todos os botões
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Mostra a aba selecionada
+            const selectedTab = document.getElementById(`${tabName}-tab`);
+            if (selectedTab) {
+                selectedTab.style.display = 'flex';
+                selectedTab.style.flexDirection = 'column';
+            }
+
+            // Marca botão como ativo
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+        }
+
+        function toggleAccordion(trigger) {
+            const item = trigger.parentElement;
+            const content = item.querySelector('.accordion-content');
+            const isOpen = content.style.display !== 'none';
+
+            item.classList.toggle('expanded');
+            content.style.display = isOpen ? 'none' : 'block';
+
+            // Rotaciona o ícone
+            const icon = trigger.querySelector('span:last-child');
+            icon.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+            icon.style.transition = 'transform 0.3s ease';
+        }
+
+        function convertHTML() {
+            const input = document.getElementById('lab-input').value;
+            const output = document.getElementById('lab-output');
+
+            if (!input.trim()) {
+                output.value = '/* Nenhuma entrada */';
+                return;
+            }
+
+            // Simples processamento de HTML para demonstração
+            const processed = input
+                .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                .replace(/<!--[\s\S]*?-->/g, '')
+                .trim();
+
+            output.value = `/* HTML Processado */\n${processed.substring(0, 500)}...`;
+            FusionOS.Utils.speak('HTML convertido com sucesso.');
+        }
+
+        function injectModule() {
+            const code = document.getElementById('lab-output').value;
+            if (!code.trim()) {
+                FusionOS.Utils.speak('Nenhum código para injetar.');
+                return;
+            }
+
+            try {
+                // Segurança: não executar código arbitrário em produção
+                console.log('Módulo injetado:', code.substring(0, 100));
+                FusionOS.Utils.speak('Módulo injetado com sucesso.');
+            } catch (e) {
+                console.error('Erro ao injetar:', e);
+                FusionOS.Utils.speak('Erro ao injetar módulo.');
+            }
+        }
+
+        function saveCustomCSS() {
+            const css = document.getElementById('css-input').value;
+            if (css.trim()) {
+                const style = document.createElement('style');
+                style.textContent = css;
+                document.head.appendChild(style);
+                FusionOS.Utils.speak('Estilos personalizados aplicados.');
+            }
+        }
+
+        function saveUserSettings() {
+            const userName = document.getElementById('userName').value;
+            const systemName = document.getElementById('systemName').value;
+
+            if (userName) {
+                localStorage.setItem('fusion_os_user', userName);
+                FusionOS.Utils.speak(`Olá, ${userName}!`);
+            }
+
+            if (systemName) {
+                localStorage.setItem('fusion_os_system', systemName);
+            }
+
+            FusionOS.Utils.speak('Configurações salvas com sucesso.');
+        }
+
+        function closeRuntime() {
+            const runtimeLayer = document.getElementById('runtimeLayer');
+            const runtimeFrame = document.getElementById('runtimeFrame');
+
+            runtimeLayer.classList.remove('visible');
+            setTimeout(() => {
+                runtimeFrame.src = '';
+            }, 300);
+
+            FusionOS.Utils.speak('Sandbox fechado.');
+        }
+
+        function exitFusion() {
+            const fusionExitBtn = document.getElementById('fusionExitBtn');
+            const navRoot = document.getElementById('navRoot') || document.body;
+
+            if (navRoot !== document.body) {
+                navRoot.innerHTML = '';
+            }
+
+            fusionExitBtn.classList.remove('visible');
+            FusionOS.Utils.speak('Fusão encerrada.');
+        }
+
+        function injectIntoDOM(target, html) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+
+            // Injeta estilos
+            doc.head.querySelectorAll('style, link[rel="stylesheet"]').forEach(el => {
+                document.head.appendChild(el.cloneNode(true));
+            });
+
+            // Injeta conteúdo
+            target.innerHTML = doc.body.innerHTML;
+        }
+
+        function createIframe(target, url) {
+            const iframe = document.createElement('iframe');
+            iframe.src = url;
+            iframe.style.cssText = 'width: 100%; height: 100%; border: none; position: fixed; inset: 0; z-index: 10015; background: var(--bg-primary);';
+            target.appendChild(iframe);
+        }
+
+        // ─────────────────────────────────────────────────────────────────────
+        // INICIALIZAÇÃO
+        // ─────────────────────────────────────────────────────────────────────
+        document.addEventListener('DOMContentLoaded', () => {
+            FusionOS.init();
+        });
+
+        // Expõe FusionOS globalmente
+        window.FusionOS = FusionOS;
+    </script>
+</body>
+</html>

@@ -1720,109 +1720,81 @@ const splitBlocks = text => {
 
 const renderPaginatedResponse = text => {
   try { speechSynthesis.cancel(); } catch(e){}
-
-  // safety: DEV_MODE fallback (se o DEV_MODE não existir, assume false)
-  const safeDev = (typeof DEV_MODE !== 'undefined') ? !!DEV_MODE : false;
-
-  // garantir que o container de resposta fique acima do iframe e seja interativo
-  const respEl = document.getElementById('response');
-  if (!respEl) {
-    console.warn('renderPaginatedResponse: #response não encontrado');
-    return;
-  }
-  respEl.style.zIndex = 12000;
-  respEl.style.pointerEvents = 'auto';
-
-  // garantir que o iframe (se existir) fique atrás
-  const frame = document.getElementById('frame');
-  if (frame) {
-    frame.style.position = frame.style.position || 'relative';
-    frame.style.zIndex = 1;
-  }
-
   autoAdvance = true;
-
-  // remove páginas antigas (mantém .initial)
+  const respEl = document.getElementById('response');
+  
+  // Limpa páginas anteriores, mantém controles
   Array.from(respEl.querySelectorAll('.page')).forEach(p => {
     if (!p.classList.contains('initial')) p.remove();
   });
-
+  
   pages = [];
-  const pageGroups = splitBlocks(String(text || ''));
-
-  // Debug rápido: confirmar que chegou conteúdo
-  console.log('[renderPaginatedResponse] pageGroups count:', pageGroups ? pageGroups.length : 0, pageGroups);
-
+  const pageGroups = splitBlocks(text);
   const controls = respEl.querySelector('.response-controls');
-
-  // títulos fixos (mantém sua triagem Recompensa/Exploração/Antecipação)
-  const baseTitles = ['🎁 Recompensa Inicial', '👁️ Exploração e Curiosidade', '⚡ Antecipação Vibracional'];
-
-  // criar páginas
+  
+  // Títulos cíclicos para evitar undefined em páginas extras
+  const baseTitles = ['🎁 Recompensa Inicial', '👁️ Exploração', '⚡ Antecipação'];
+  
   pageGroups.forEach((group, pageIndex) => {
     const pageEl = createEl('div', pageIndex === 0 ? 'page active' : 'page');
-
-    // cada grupo tem 3 slots (pode ter nulls)
+    
     group.forEach((content, blockIndex) => {
+      // Classes visuais: intro, middle, ending
       const visualClass = blockIndex === 0 ? 'intro' : blockIndex === 1 ? 'middle' : 'ending';
-      const title = baseTitles[blockIndex] || (blockIndex === 0 ? baseTitles[0] : blockIndex === 1 ? baseTitles[1] : baseTitles[2]);
-
-      // slot vazio -> bloco decorativo não interativo
+      const title = baseTitles[blockIndex] || '✧ Expansão';
+      
+      // Se o conteúdo for nulo (slot vazio de preenchimento), cria bloco invisível ou decorativo
       if (!content) {
-        const emptyBlock = createEl('div', `response-block ${visualClass} empty-slot`,
-          `<h3>${title}</h3><div class="block-body"><em>—</em></div>`
-        );
-        emptyBlock.style.opacity = '0.28';
-        emptyBlock.style.pointerEvents = 'none';
+        const emptyBlock = createEl('div', `response-block ${visualClass} empty-slot`, '');
+        emptyBlock.style.opacity = '0.3';
+        emptyBlock.style.pointerEvents = 'none'; // Não clicável
         pageEl.appendChild(emptyBlock);
         return;
       }
 
-      // Se precisar de comportamento diferente em Dev (ex.: deixar passar HTML cru),
-      // deixe que mdToHtml lide com isso; safeDev pode ser consultado por mdToHtml externamente.
       const htmlBody = mdToHtml(content);
-
-      const blockEl = createEl('div', `response-block ${visualClass}`,
+      
+      const blockEl = createEl('div', `response-block ${visualClass}`, 
         `<h3>${title}</h3><div class="block-body">${htmlBody}</div>`
       );
 
-      // meta (cristalizar)
+      // Meta buttons (Cristalizar)
       const meta = createEl('div', 'meta');
       const crystalBtn = createEl('button', 'crystal-btn', '✶');
       crystalBtn.title = 'Cristalizar';
       crystalBtn.addEventListener('click', (ev) => {
         ev.stopPropagation();
-        try { cristalizar({ title: title, content: content }); } catch(e){ console.warn('cristalizar erro', e); }
+        cristalizar({ title: title, content: content });
         crystalBtn.innerText = '✓'; setTimeout(() => crystalBtn.innerText = '✶', 1200);
       });
       meta.appendChild(crystalBtn);
       blockEl.appendChild(meta);
 
-      // estado e clique (TTS / expand -> chama AI)
+      // Lógica de Clique e TTS
       blockEl.dataset.state = '';
       blockEl.addEventListener('click', (ev) => {
-        // ignora clicks em meta ou links
-        if (ev.target.closest('.meta') || ev.target.tagName === 'A') return;
-
+        if (ev.target.closest('.meta') || ev.target.tagName === 'A') return; // Ignora meta e links
+        
         const alreadySpoken = blockEl.dataset.state === 'spoken';
         if (!alreadySpoken) {
           try { speechSynthesis.cancel(); } catch(e){}
+          // Lê apenas texto visível
           const textToSpeak = blockEl.querySelector('.block-body') ? blockEl.querySelector('.block-body').innerText : content;
           speakText(textToSpeak);
-          blockEl.classList.add('clicked');
+          blockEl.classList.add('clicked'); 
           blockEl.dataset.state = 'spoken';
         } else {
-          // expandir e gerar novo prompt (feedback loop)
-          blockEl.classList.add('expanded');
+          // Expandir e gerar novo prompt (Loop de feedback)
+          blockEl.classList.add('expanded'); 
           blockEl.dataset.state = '';
-
+          
           if (!assistantEnabled) {
-            assistantEnabled = true;
+            assistantEnabled = true; 
             localStorage.setItem('di_assistantEnabled', '1');
             updateToggleBtnVisual();
             if (training && trainingActive) conversation.unshift({ role: 'system', content: training });
           }
-
+          
           const expandedPrompt = `Contexto expandido: "${title}"\n\n${content}\n\nContinue aprofundando especificamente este ponto.`;
           showLoading('Pulso em Expansão...');
           speakText('Expandindo consciência...');
@@ -1834,27 +1806,18 @@ const renderPaginatedResponse = text => {
       pageEl.appendChild(blockEl);
     });
 
-    // footer
     pageEl.appendChild(createEl('p', 'footer-text', `<em>Do seu jeito. <strong>Sempre</strong> único. <strong>Sempre</strong> seu.</em>`));
-
-    // inserir antes dos controles (para manter a barra sempre no final)
+    
     if (controls && controls.parentNode) respEl.insertBefore(pageEl, controls);
     else respEl.appendChild(pageEl);
-
     pages.push(pageEl);
-
-    // aplicar o beautifier/observer (se presente)
-    if (window.UNIFIED_BEAUTY && typeof window.UNIFIED_BEAUTY.run === 'function') {
-      try { window.UNIFIED_BEAUTY.run(pageEl); } catch (err) { console.warn('UNIFIED_BEAUTY.run falhou', err); }
-    }
   });
 
-  // reset page index e atualizar indicador
   currentPage = 0;
   const pi = document.getElementById('pageIndicator');
   if (pi) pi.textContent = `1 / ${pages.length}`;
-
-  // auto-fala da primeira página com leve delay para garantir DOM ready
+  
+  // Auto-fala da primeira página
   setTimeout(() => speakPage(0), 500);
 };
 
